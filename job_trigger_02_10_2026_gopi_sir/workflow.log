@@ -1,0 +1,126 @@
+2026-10-03 16:12:38,081 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:12:38,082 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:12:38,083 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:12:38,083 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:12:38,084 | INFO | Added job "send_daily_report" to job store "default"
+2026-10-03 16:12:38,084 | INFO | Added job "data_load" to job store "default"
+2026-10-03 16:12:38,084 | INFO | Added job "report_job" to job store "default"
+2026-10-03 16:12:38,085 | INFO | Added job "backup_job" to job store "default"
+2026-10-03 16:12:38,085 | INFO | Scheduler started
+2026-10-03 16:12:40,087 | INFO | Running job "backup_job (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" (scheduled at 2026-10-03 16:12:40.081494+05:30)
+2026-10-03 16:12:40,087 | INFO | Removed job backup_job
+2026-10-03 16:12:40,088 | INFO | Running job "data_load (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" (scheduled at 2026-10-03 16:12:40.081494+05:30)
+2026-10-03 16:12:40,088 | INFO | Removed job data_load
+2026-10-03 16:12:40,089 | INFO | Running job "report_job (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" (scheduled at 2026-10-03 16:12:40.081494+05:30)
+2026-10-03 16:12:40,089 | INFO | Removed job report_job
+2026-10-03 16:12:40,089 | INFO | STARTED  backup_job
+2026-10-03 16:12:40,089 | INFO | STARTED  data_load
+2026-10-03 16:12:40,089 | INFO | STARTED  report_job
+2026-10-03 16:12:43,090 | ERROR | Job "report_job (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" raised an exception
+Traceback (most recent call last):
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\.venv\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\workflow_triggers_1.py", line 80, in report_job
+    raise ConnectionError("Database db.internal:5432 refused connection")
+ConnectionError: Database db.internal:5432 refused connection
+2026-10-03 16:12:43,091 | ERROR | FAILED   report_job | ConnectionError: Database db.internal:5432 refused connection | took 0:00:03.002247
+2026-10-03 16:12:45,089 | INFO | Job "data_load (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" executed successfully
+2026-10-03 16:12:45,090 | INFO | SUCCESS  data_load | 1500 rows loaded | took 0:00:05.000891
+2026-10-03 16:12:48,088 | INFO | Job "backup_job (trigger: date[2026-10-03 16:12:40 IST], next run at: 2026-10-03 16:12:40 IST)" executed successfully
+2026-10-03 16:12:48,088 | INFO | SUCCESS  backup_job | backup completed, 2.3 GB | took 0:00:07.999510
+2026-10-03 16:15:38,485 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:15:38,486 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:15:38,486 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:15:38,486 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:15:38,489 | INFO | Added job "send_daily_report" to job store "default"
+2026-10-03 16:15:38,489 | INFO | Added job "data_load" to job store "default"
+2026-10-03 16:15:38,489 | INFO | Added job "report_job" to job store "default"
+2026-10-03 16:15:38,489 | INFO | Added job "backup_job" to job store "default"
+2026-10-03 16:15:38,489 | INFO | Scheduler started
+2026-10-03 16:15:40,498 | INFO | Running job "backup_job (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" (scheduled at 2026-10-03 16:15:40.485312+05:30)
+2026-10-03 16:15:40,498 | INFO | Removed job backup_job
+2026-10-03 16:15:40,499 | INFO | Running job "data_load (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" (scheduled at 2026-10-03 16:15:40.485312+05:30)
+2026-10-03 16:15:40,499 | INFO | Removed job data_load
+2026-10-03 16:15:40,499 | INFO | Running job "report_job (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" (scheduled at 2026-10-03 16:15:40.485312+05:30)
+2026-10-03 16:15:40,499 | INFO | Removed job report_job
+2026-10-03 16:15:40,499 | INFO | STARTED  backup_job
+2026-10-03 16:15:40,500 | INFO | STARTED  data_load
+2026-10-03 16:15:40,500 | INFO | STARTED  report_job
+2026-10-03 16:15:43,502 | ERROR | Job "report_job (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" raised an exception
+Traceback (most recent call last):
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\.venv\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\workflow_triggers_1.py", line 80, in report_job
+    raise ConnectionError("Database db.internal:5432 refused connection")
+ConnectionError: Database db.internal:5432 refused connection
+2026-10-03 16:15:43,503 | ERROR | FAILED   report_job | ConnectionError: Database db.internal:5432 refused connection | took 0:00:03.003262
+2026-10-03 16:15:45,499 | INFO | Job "data_load (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" executed successfully
+2026-10-03 16:15:45,500 | INFO | SUCCESS  data_load | 1500 rows loaded | took 0:00:05.000247
+2026-10-03 16:15:48,498 | INFO | Job "backup_job (trigger: date[2026-10-03 16:15:40 IST], next run at: 2026-10-03 16:15:40 IST)" executed successfully
+2026-10-03 16:15:48,499 | INFO | SUCCESS  backup_job | backup completed, 2.3 GB | took 0:00:07.999435
+2026-10-03 16:17:33,593 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:17:33,595 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:17:33,595 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:17:33,595 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:17:33,596 | INFO | Added job "send_daily_report" to job store "default"
+2026-10-03 16:17:33,596 | INFO | Added job "data_load" to job store "default"
+2026-10-03 16:17:33,596 | INFO | Added job "report_job" to job store "default"
+2026-10-03 16:17:33,596 | INFO | Added job "backup_job" to job store "default"
+2026-10-03 16:17:33,596 | INFO | Scheduler started
+2026-10-03 16:17:35,611 | INFO | Running job "backup_job (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" (scheduled at 2026-10-03 16:17:35.594149+05:30)
+2026-10-03 16:17:35,611 | INFO | Removed job backup_job
+2026-10-03 16:17:35,612 | INFO | Running job "data_load (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" (scheduled at 2026-10-03 16:17:35.594149+05:30)
+2026-10-03 16:17:35,612 | INFO | Removed job data_load
+2026-10-03 16:17:35,612 | INFO | Running job "report_job (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" (scheduled at 2026-10-03 16:17:35.594149+05:30)
+2026-10-03 16:17:35,613 | INFO | Removed job report_job
+2026-10-03 16:17:35,613 | INFO | STARTED  backup_job
+2026-10-03 16:17:35,613 | INFO | STARTED  data_load
+2026-10-03 16:17:35,613 | INFO | STARTED  report_job
+2026-10-03 16:17:38,615 | ERROR | Job "report_job (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" raised an exception
+Traceback (most recent call last):
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\.venv\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\workflow_triggers_1.py", line 80, in report_job
+    raise ConnectionError("Database db.internal:5432 refused connection")
+ConnectionError: Database db.internal:5432 refused connection
+2026-10-03 16:17:38,616 | ERROR | FAILED   report_job | ConnectionError: Database db.internal:5432 refused connection | took 0:00:03.002824
+2026-10-03 16:17:40,612 | INFO | Job "data_load (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" executed successfully
+2026-10-03 16:17:40,613 | INFO | SUCCESS  data_load | 1500 rows loaded | took 0:00:05.000077
+2026-10-03 16:17:43,612 | INFO | Job "backup_job (trigger: date[2026-10-03 16:17:35 IST], next run at: 2026-10-03 16:17:35 IST)" executed successfully
+2026-10-03 16:17:43,612 | INFO | SUCCESS  backup_job | backup completed, 2.3 GB | took 0:00:07.999140
+2026-10-03 16:20:00,007 | INFO | Running job "send_daily_report (trigger: cron[hour='16', minute='20'], next run at: 2026-10-04 16:20:00 IST)" (scheduled at 2026-10-03 16:20:00+05:30)
+2026-10-03 16:20:00,008 | INFO | DAILY REPORT sent: [DAILY REPORT ATTENTION] 2026-10-03 - 6 success, 3 failed, 0 not run
+2026-10-03 16:20:04,058 | INFO | Job "send_daily_report (trigger: cron[hour='16', minute='20'], next run at: 2026-10-04 16:20:00 IST)" executed successfully
+2026-10-03 16:30:58,395 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:30:58,396 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:30:58,396 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:30:58,396 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-10-03 16:30:58,398 | INFO | Added job "send_daily_report" to job store "default"
+2026-10-03 16:30:58,398 | INFO | Added job "data_load" to job store "default"
+2026-10-03 16:30:58,398 | INFO | Added job "report_job" to job store "default"
+2026-10-03 16:30:58,398 | INFO | Added job "backup_job" to job store "default"
+2026-10-03 16:30:58,398 | INFO | Scheduler started
+2026-10-03 16:31:00,016 | INFO | Running job "send_daily_report (trigger: cron[hour='16', minute='31'], next run at: 2026-10-03 16:31:00 IST)" (scheduled at 2026-10-03 16:31:00+05:30)
+2026-10-03 16:31:00,017 | INFO | DAILY REPORT sent: [DAILY REPORT ATTENTION] 2026-10-03 - 6 success, 3 failed, 0 not run
+2026-10-03 16:31:00,401 | INFO | Running job "backup_job (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" (scheduled at 2026-10-03 16:31:00.396005+05:30)
+2026-10-03 16:31:00,402 | INFO | Removed job backup_job
+2026-10-03 16:31:00,402 | INFO | Running job "data_load (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" (scheduled at 2026-10-03 16:31:00.396005+05:30)
+2026-10-03 16:31:00,402 | INFO | Removed job data_load
+2026-10-03 16:31:00,403 | INFO | Running job "report_job (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" (scheduled at 2026-10-03 16:31:00.396005+05:30)
+2026-10-03 16:31:00,403 | INFO | Removed job report_job
+2026-10-03 16:31:00,403 | INFO | STARTED  backup_job
+2026-10-03 16:31:00,403 | INFO | STARTED  data_load
+2026-10-03 16:31:00,403 | INFO | STARTED  report_job
+2026-10-03 16:31:03,405 | ERROR | Job "report_job (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" raised an exception
+Traceback (most recent call last):
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\.venv\Lib\site-packages\apscheduler\executors\base.py", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File "E:\TASKS\job_trigger_02_10_2026_gopi_sir\workflow_triggers_1.py", line 80, in report_job
+    raise ConnectionError("Database db.internal:5432 refused connection")
+ConnectionError: Database db.internal:5432 refused connection
+2026-10-03 16:31:03,406 | ERROR | FAILED   report_job | ConnectionError: Database db.internal:5432 refused connection | took 0:00:03.002768
+2026-10-03 16:31:04,530 | INFO | Job "send_daily_report (trigger: cron[hour='16', minute='31'], next run at: 2026-10-04 16:31:00 IST)" executed successfully
+2026-10-03 16:31:05,403 | INFO | Job "data_load (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" executed successfully
+2026-10-03 16:31:05,403 | INFO | SUCCESS  data_load | 1500 rows loaded | took 0:00:05.000579
+2026-10-03 16:31:08,402 | INFO | Job "backup_job (trigger: date[2026-10-03 16:31:00 IST], next run at: 2026-10-03 16:31:00 IST)" executed successfully
+2026-10-03 16:31:08,402 | INFO | SUCCESS  backup_job | backup completed, 2.3 GB | took 0:00:07.999612

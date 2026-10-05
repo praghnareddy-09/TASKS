@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}My profile · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Home</a> / Profile</div><h1>My profile</h1><p class="page-subtitle">Manage your personal details.</p></div></div>
+<section class="card-tw"><div class="card-tw-body"><form method="post" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2"><button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Save changes</span></button><a class="btn btn-light btn-tw" href="{% url 'accounts:password_change' %}">Change password</a></div></form></div></section>
+{% endblock %}

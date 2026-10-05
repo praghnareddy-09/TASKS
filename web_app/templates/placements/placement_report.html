@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Placement report · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:list' %}">Placements</a> / Report</div><h1>Placement report</h1><p class="page-subtitle">Placement summary by batch.</p></div><a class="btn btn-primary btn-tw" href="{% url 'placements:report' %}?format=csv"><i class="bi bi-download"></i>Export CSV</a></div>
+<section class="card-tw"><div class="table-responsive"><table class="table table-tw"><thead><tr><th>Batch</th><th>Trainees</th><th>Joined placements</th><th>Placement rate</th><th>Companies</th></tr></thead><tbody>{% for batch in batches %}<tr><td>{{ batch.name }}</td><td>{{ batch.trainee_total }}</td><td>{{ batch.placed_total }}</td><td>{{ batch.placement_rate }}%</td><td>{{ batch.company_total }}</td></tr>{% empty %}<tr><td colspan="5" class="text-center text-muted py-4">No batches available.</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

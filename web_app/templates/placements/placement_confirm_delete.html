@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Delete placement · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:list' %}">Placements</a> / Delete</div><h1>Delete placement</h1></div></div>
+<section class="card-tw card-tw-body"><p>Are you sure you want to delete the placement for <strong>{{ object.trainee }}</strong> at <strong>{{ object.company_name }}</strong>?</p><form method="post">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete placement</button><a class="btn btn-light btn-tw" href="{% url 'placements:detail' object.pk %}">Cancel</a></form></section>
+{% endblock %}

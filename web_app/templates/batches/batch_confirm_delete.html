@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Delete batch · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'batches:list' %}">Batches</a> / Delete</div><h1>Delete batch</h1></div></div>
+<section class="card-tw"><div class="card-tw-body"><p>Are you sure you want to delete <strong>{{ object.name }}</strong>? Its enrollments and placement records will also be removed.</p><form method="post" data-loading-form>{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Delete batch</span></button> <a class="btn btn-light btn-tw" href="{% url 'batches:detail' object.pk %}">Cancel</a></form></div></section>
+{% endblock %}

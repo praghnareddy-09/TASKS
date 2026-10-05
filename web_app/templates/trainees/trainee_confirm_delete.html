@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Delete trainee · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / Delete</div><h1>Delete trainee</h1></div></div><section class="card-tw"><div class="card-tw-body"><p>Delete <strong>{{ object }}</strong>? Their enrollments and placement records will also be removed.</p><form method="post">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete trainee</button> <a class="btn btn-light btn-tw" href="{% url 'trainees:detail' object.pk %}">Cancel</a></form></div></section>
+{% endblock %}

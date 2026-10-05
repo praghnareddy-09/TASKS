@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Edit placement{% else %}New placement{% endif %} · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% if user.role == 'TRAINEE' %}{% url 'placements:my_list' %}{% else %}{% url 'placements:list' %}{% endif %}">Placements</a> / {% if object %}Edit{% else %}New{% endif %}</div><h1>{% if object %}Update placement{% else %}Share your placement{% endif %}</h1><p class="page-subtitle">Add company, HR contact and offer details.</p></div></div>
+<section class="card-tw"><div class="card-tw-body"><form method="post" enctype="multipart/form-data" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2 mt-3"><button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Save placement</span></button><a class="btn btn-light btn-tw" href="{% if user.role == 'TRAINEE' %}{% url 'placements:my_list' %}{% else %}{% url 'placements:list' %}{% endif %}">Cancel</a></div></form></div></section>
+{% endblock %}

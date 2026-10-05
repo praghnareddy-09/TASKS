@@ -1,0 +1,16 @@
+job_id,started,ended,duration_sec,status,details,traceback
+report_job,2026-10-03 16:12:40,2026-10-03 16:12:43,3.0,FAILED,ConnectionError: Database db.internal:5432 refused connection,
+data_load,2026-10-03 16:12:40,2026-10-03 16:12:45,5.0,SUCCESS,1500 rows loaded,
+backup_job,2026-10-03 16:12:40,2026-10-03 16:12:48,8.0,SUCCESS,"backup completed, 2.3 GB",
+report_job,2026-10-03 16:15:40,2026-10-03 16:15:43,3.0,FAILED,ConnectionError: Database db.internal:5432 refused connection,
+data_load,2026-10-03 16:15:40,2026-10-03 16:15:45,5.0,SUCCESS,1500 rows loaded,
+backup_job,2026-10-03 16:15:40,2026-10-03 16:15:48,8.0,SUCCESS,"backup completed, 2.3 GB",
+report_job,2026-10-03 16:17:35,2026-10-03 16:17:38,3.0,FAILED,ConnectionError: Database db.internal:5432 refused connection,
+data_load,2026-10-03 16:17:35,2026-10-03 16:17:40,5.0,SUCCESS,1500 rows loaded,
+backup_job,2026-10-03 16:17:35,2026-10-03 16:17:43,8.0,SUCCESS,"backup completed, 2.3 GB",
+report_job,2026-10-03 16:31:00,2026-10-03 16:31:03,3.0,FAILED,ConnectionError: Database db.internal:5432 refused connection,"File ""E:\TASKS\job_trigger_02_10_2026_gopi_sir\.venv\Lib\site-packages\apscheduler\executors\base.py"", line 131, in run_job
+    retval = job.func(*job.args, **job.kwargs)
+  File ""E:\TASKS\job_trigger_02_10_2026_gopi_sir\workflow_triggers_1.py"", line 80, in report_job
+    raise ConnectionError(""Database db.internal:5432 refused connection"")"
+data_load,2026-10-03 16:31:00,2026-10-03 16:31:05,5.0,SUCCESS,1500 rows loaded,
+backup_job,2026-10-03 16:31:00,2026-10-03 16:31:08,8.0,SUCCESS,"backup completed, 2.3 GB",
