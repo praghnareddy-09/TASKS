@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Trainee created · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / Account created</div><h1>Trainee account created</h1><p class="page-subtitle">Share this temporary password securely. It will not be shown again.</p></div></div>
+<section class="card-tw"><div class="card-tw-body">
+  <h2 class="h5 fw-bold">{{ trainee }}</h2>
+  <p class="text-muted">Username: <strong class="text-dark">{{ trainee.user.username }}</strong></p>
+  <label class="form-label" for="temporary-password">Temporary password</label>
+  <div class="input-group mb-3">
+    <input class="form-control" id="temporary-password" type="text" value="{{ temporary_password }}" readonly autocomplete="off">
+    <button class="btn btn-outline-secondary" type="button" data-copy-target="#temporary-password">Copy password</button>
+  </div>
+  <p class="text-muted">The trainee must change this password when they first sign in.</p>
+  <a class="btn btn-primary btn-tw" href="{% url 'trainees:detail' trainee.pk %}">View trainee</a>
+  <a class="btn btn-light btn-tw" href="{% url 'trainees:create' %}">Add another trainee</a>
+</div></section>
+{% endblock %}

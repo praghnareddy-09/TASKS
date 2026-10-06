@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}My dashboard · TweakTech{% endblock %}
+{% block content %}
+<div class="trainee-dashboard">
+  <header class="trainee-dashboard-header">
+    <div>
+      <div class="breadcrumbs">Workspace / Overview</div>
+      <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
+      <p>Track your batch and placement progress.</p>
+    </div>
+    <div class="trainee-dashboard-actions">
+      <a class="trainee-profile-completion" href="{% url 'accounts:profile' %}" aria-label="Complete your profile, {{ profile_completion }} percent complete">
+        <span class="trainee-profile-completion-heading">Profile completion</span>
+        <span class="trainee-profile-completion-value">{{ profile_completion }}%</span>
+        <progress class="trainee-profile-progress" value="{{ profile_completion }}" max="100">{{ profile_completion }}%</progress>
+        <span class="trainee-profile-completion-link">Complete your profile</span>
+      </a>
+      <a class="btn btn-primary trainee-primary-button" href="{% url 'placements:my_list' %}">My Placement</a>
+    </div>
+  </header>
+
+  <section class="trainee-kpi-grid" aria-label="Your progress overview">
+    <article class="trainee-dashboard-card trainee-kpi-card">
+      <span class="trainee-kpi-icon" aria-label="Batch"><i class="bi bi-collection" aria-hidden="true"></i></span>
+      <div class="trainee-kpi-label">Batch</div>
+      <div class="trainee-kpi-value">{{ batch_ordinal|default:"—" }}</div>
+      {% if not batch_ordinal %}<p class="trainee-kpi-note">Waiting for admin to add you to a batch</p>{% endif %}
+    </article>
+    <article class="trainee-dashboard-card trainee-kpi-card">
+      <span class="trainee-kpi-icon" aria-label="Placement status"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
+      <div class="trainee-kpi-label">Placement status</div>
+      {% with status=placement_status|default:"NOT_STARTED" %}
+      <div class="trainee-kpi-value"><span class="trainee-status-badge trainee-status-{{ status|lower }}">{% if status == "NOT_STARTED" %}Not started{% else %}{{ status|title }}{% endif %}</span></div>
+      {% endwith %}
+    </article>
+    <article class="trainee-dashboard-card trainee-kpi-card">
+      <span class="trainee-kpi-icon" aria-label="Next milestone"><i class="bi bi-flag" aria-hidden="true"></i></span>
+      <div class="trainee-kpi-label">Next milestone</div>
+      <div class="trainee-kpi-milestone">
+        {% if placement_status == "OFFERED" %}Confirm your joining date
+        {% elif placement_status == "JOINED" %}Placement complete
+        {% elif placement_status == "DECLINED" %}Add a new offer
+        {% else %}Add your placement details{% endif %}
+      </div>
+    </article>
+  </section>
+
+  <div class="trainee-dashboard-columns">
+    <section class="trainee-dashboard-card trainee-placement-card" aria-labelledby="trainee-placement-progress-title">
+      <h2 id="trainee-placement-progress-title">Placement progress</h2>
+      <ol class="trainee-progress-tracker" aria-label="Placement steps">
+        <li class="trainee-progress-step {% if placement_status %}is-complete{% else %}is-current{% endif %}">
+          <span class="trainee-progress-marker">{% if placement_status %}<i class="bi bi-check-lg" aria-hidden="true"></i>{% else %}1{% endif %}</span>
+          <span>Details added</span>
+        </li>
+        <li class="trainee-progress-step {% if placement_status == 'JOINED' %}is-complete{% elif placement_status == 'OFFERED' %}is-current{% endif %}">
+          <span class="trainee-progress-marker">{% if placement_status == 'JOINED' %}<i class="bi bi-check-lg" aria-hidden="true"></i>{% else %}2{% endif %}</span>
+          <span>Offer received</span>
+        </li>
+        <li class="trainee-progress-step {% if placement_status == 'JOINED' %}is-complete{% endif %}">
+          <span class="trainee-progress-marker">{% if placement_status == 'JOINED' %}<i class="bi bi-check-lg" aria-hidden="true"></i>{% else %}3{% endif %}</span>
+          <span>Joined</span>
+        </li>
+      </ol>
+
+      {% if placement_status %}
+      <dl class="trainee-placement-details">
+        <div><dt>Company</dt><dd>{{ latest_placement.company_name|default:"—" }}</dd></div>
+        <div><dt>Job title</dt><dd>{{ latest_placement.job_title|default:"—" }}</dd></div>
+        <div><dt>Offer date</dt><dd>{{ latest_placement.offer_date|date:"M j, Y"|default:"—" }}</dd></div>
+        <div><dt>Joining date</dt><dd>{{ latest_placement.joining_date|date:"M j, Y"|default:"—" }}</dd></div>
+        <div><dt>Package</dt><dd>{% if latest_placement.package_lpa %}{{ latest_placement.package_lpa }} LPA{% else %}—{% endif %}</dd></div>
+      </dl>
+      {% else %}
+      <div class="trainee-placement-empty">
+        <p>Add your placement information when you receive an offer so your progress can be tracked.</p>
+        <a class="btn btn-primary trainee-primary-button" href="{% url 'placements:my_list' %}">Add placement details</a>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="trainee-dashboard-card trainee-checklist-card" aria-labelledby="trainee-checklist-title">
+      <h2 id="trainee-checklist-title">Checklist</h2>
+      <ul class="trainee-checklist">
+        <li>
+          <span class="trainee-checklist-icon {% if batch_ordinal %}is-done{% endif %}" aria-hidden="true"><i class="bi {% if batch_ordinal %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i></span>
+          <span>Batch assigned</span>
+        </li>
+        <li>
+          <span class="trainee-checklist-icon {% if placement_status %}is-done{% endif %}" aria-hidden="true"><i class="bi {% if placement_status %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i></span>
+          <span>Placement details submitted</span>
+        </li>
+        <li>
+          <span class="trainee-checklist-icon {% if placement_status == 'JOINED' %}is-done{% endif %}" aria-hidden="true"><i class="bi {% if placement_status == 'JOINED' %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i></span>
+          <span>Joining confirmed</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="trainee-dashboard-card" aria-labelledby="application-overview-title">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+      <div><h2 id="application-overview-title">Application history</h2><p class="text-muted mb-0 mt-1">Track each job application and your interview progress.</p></div>
+      {% if is_verified %}<a class="btn btn-primary btn-tw" href="{% url 'placements:application_create' %}"><i class="bi bi-plus-lg"></i>Add application</a>
+      {% else %}<span class="status-badge badge-status-upcoming">{{ trainee.get_verification_status_display }}</span>{% endif %}
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-3"><div class="workflow-stat"><span>Total applications</span><strong>{{ application_count }}</strong></div></div>
+      <div class="col-6 col-xl-3"><div class="workflow-stat"><span>Active interviews</span><strong>{{ active_interview_count }}</strong></div></div>
+      <div class="col-6 col-xl-3"><div class="workflow-stat"><span>Selected / joined</span><strong>{{ selected_applications }}</strong></div></div>
+      <div class="col-6 col-xl-3"><div class="workflow-stat"><span>Offers received</span><strong>{{ offers_received }}</strong></div></div>
+    </div>
+    {% if recent_applications %}
+    <div class="table-responsive"><table class="table table-tw"><thead><tr><th>Company</th><th>Role</th><th>Batch</th><th>Status</th><th>Interviews</th><th>Updated</th></tr></thead><tbody>
+      {% for application in recent_applications %}<tr><td><a class="fw-semibold" href="{% url 'placements:application_detail' application.pk %}">{{ application.company_name }}</a></td><td>{{ application.job_role }}</td><td>{{ application.batch.name }}</td><td><span class="status-badge badge-status-{{ application.status|lower }}">{{ application.get_status_display }}</span></td><td>{{ application.interviews.all|length }}</td><td>{{ application.updated_at|date:"M j, Y" }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty-state py-4"><i class="bi bi-send"></i><p class="mb-0">{% if is_verified %}No job applications yet. Add one when you apply to a company.{% else %}An Admin must verify your profile before you can add job applications.{% endif %}</p></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

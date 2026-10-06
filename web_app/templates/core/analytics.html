@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Analytics · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Analytics</div><h1>Analytics dashboard</h1><p class="page-subtitle">Live operational view across batches, trainees and applications.</p></div></div>
+<section class="workflow-analytics-section">
+  <h2>Batch analytics</h2>
+  <div class="workflow-analytics-grid">
+    <article class="card-tw stat-card"><div class="stat-icon"><i class="bi bi-collection"></i></div><div class="stat-value">{{ total_batches }}</div><div class="stat-label">Total batches</div></article>
+    <article class="card-tw stat-card"><div class="stat-icon"><i class="bi bi-lightning-charge"></i></div><div class="stat-value">{{ active_batches }}</div><div class="stat-label">Active batches</div></article>
+    <article class="card-tw stat-card"><div class="stat-icon"><i class="bi bi-check2-circle"></i></div><div class="stat-value">{{ completed_batches }}</div><div class="stat-label">Completed batches</div></article>
+  </div>
+</section>
+<section class="workflow-analytics-section">
+  <h2>Trainee analytics</h2>
+  <div class="workflow-analytics-grid">
+    <article class="card-tw stat-card"><div class="stat-value">{{ total_registered }}</div><div class="stat-label">Total registered</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ verified_trainees }}</div><div class="stat-label">Verified</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ assigned_trainees }}</div><div class="stat-label">Assigned to batch</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ active_trainees }}</div><div class="stat-label">Active</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ placed_trainees }}</div><div class="stat-label">Placed (application or placement)</div></article>
+  </div>
+</section>
+<section class="workflow-analytics-section">
+  <h2>Placement analytics</h2>
+  <div class="workflow-analytics-grid">
+    <article class="card-tw stat-card"><div class="stat-value">{{ total_applications }}</div><div class="stat-label">Total applications</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ interviews_running }}</div><div class="stat-label">Interviews running</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ offers_released }}</div><div class="stat-label">Offers released</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ selected_applications }}</div><div class="stat-label">Selected</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ rejected_applications }}</div><div class="stat-label">Rejected</div></article>
+    <article class="card-tw stat-card"><div class="stat-value">{{ placement_percentage }}%</div><div class="stat-label">Placement percentage</div></article>
+  </div>
+</section>
+<section class="card-tw mb-4">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Batch placement tracking</h2></div>
+  <div class="table-responsive"><table class="table table-tw"><thead><tr><th>Batch</th><th>Course</th><th>Trainees</th><th>Applications</th><th>Selected / joined</th><th>Placement rate</th></tr></thead><tbody>
+    {% for batch in batch_rows %}<tr><td><a href="{% url 'batches:detail' batch.pk %}">{{ batch.name }}</a><div class="small text-muted">#{{ batch.batch_number }}</div></td><td>{{ batch.course }}</td><td>{{ batch.trainee_count }}</td><td>{{ batch.application_count }}</td><td>{{ batch.placed_count }}</td><td>{{ batch.placement_rate }}%</td></tr>{% empty %}<tr><td colspan="6" class="text-muted">No batches found.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="card-tw">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Companies</h2></div>
+  <div class="table-responsive"><table class="table table-tw"><thead><tr><th>Company</th><th>Applications</th><th>Selected trainees</th></tr></thead><tbody>
+    {% for company in company_rows %}<tr><td>{{ company.company_name }}</td><td>{{ company.applications }}</td><td>{{ company.placed }}</td></tr>{% empty %}<tr><td colspan="3" class="text-muted">No application data yet.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

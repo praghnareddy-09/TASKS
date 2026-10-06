@@ -17,7 +17,7 @@ from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from accounts.models import User
-from accounts.permissions import AdminRequiredMixin, TrainerRequiredMixin
+from accounts.permissions import AdminRequiredMixin
 from batches.models import Batch
 from placements.forms import PlacementForm
 from placements.models import Placement
@@ -110,7 +110,7 @@ class MyPlacementUpdateView(TraineePlacementMixin, UpdateView):
         return reverse("placements:my_list")
 
 
-class PlacementListView(TrainerRequiredMixin, ListView):
+class PlacementListView(AdminRequiredMixin, ListView):
     model = Placement
     template_name = "placements/placement_list.html"
     context_object_name = "placements"
@@ -216,7 +216,7 @@ def company_directory_rows(placements):
     return sorted(companies, key=lambda company: (company["name"].casefold(), company["key"]))
 
 
-class CompanyDirectoryView(TrainerRequiredMixin, ListView):
+class CompanyDirectoryView(AdminRequiredMixin, ListView):
     model = Placement
     template_name = "placements/company_directory.html"
     context_object_name = "companies"
@@ -290,7 +290,7 @@ class CompanyDirectoryView(TrainerRequiredMixin, ListView):
         return response
 
 
-class CompanyDetailView(TrainerRequiredMixin, DetailView):
+class CompanyDetailView(AdminRequiredMixin, DetailView):
     model = Placement
     template_name = "placements/company_detail.html"
     context_object_name = "company_placement"
@@ -311,24 +311,6 @@ class CompanyDetailView(TrainerRequiredMixin, DetailView):
         context["company"] = grouped[0]
         context["placements"] = records
         return context
-
-
-class MyCompanyView(TraineePlacementMixin, DetailView):
-    model = Placement
-    template_name = "placements/my_company.html"
-    context_object_name = "placement"
-
-    def get_queryset(self):
-        return Placement.objects.manageable_by_trainee(self.request.user).filter(
-            status=Placement.Status.JOINED
-        ).select_related("trainee__user", "batch", "verified_by")
-
-    def get_object(self, queryset=None):
-        return self.get_queryset().order_by("-joining_date", "-updated_at").first()
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return self.render_to_response(self.get_context_data(object=self.object))
 
 
 class PlacementDetailView(LoginRequiredMixin, DetailView):

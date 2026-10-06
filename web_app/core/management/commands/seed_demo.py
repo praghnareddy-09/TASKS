@@ -21,15 +21,6 @@ class Command(BaseCommand):
         )
         admin.set_password("AdminDemo123!")
         admin.save()
-        trainers = []
-        for number in range(1, 4):
-            user, _ = User.objects.update_or_create(
-                username=f"trainer{number}",
-                defaults={"email": f"trainer{number}@tweaktech.example", "first_name": f"Trainer{number}", "last_name": "Coach", "role": User.Role.TRAINER, "is_staff": False, "is_superuser": False},
-            )
-            user.set_password("TrainerDemo123!")
-            user.save()
-            trainers.append(user)
         trainees = []
         for number in range(1, 21):
             user, _ = User.objects.update_or_create(
@@ -57,10 +48,24 @@ class Command(BaseCommand):
         batches = []
         for index, (start, end) in enumerate(dates):
             status = Batch.Status.COMPLETED if end < today else Batch.Status.RUNNING if start <= today else Batch.Status.UPCOMING
-            batch, _ = Batch.objects.update_or_create(
+            batch, created = Batch.objects.get_or_create(
                 name=names[index],
-                defaults={"course": courses[index], "trainer": trainers[index % len(trainers)], "start_date": start, "end_date": end, "status": status},
+                defaults={
+                    "batch_number": (Batch.objects.order_by("-batch_number").values_list("batch_number", flat=True).first() or 0) + 1,
+                    "course": courses[index],
+                    "trainer": admin,
+                    "start_date": start,
+                    "end_date": end,
+                    "status": status,
+                },
             )
+            if not created:
+                batch.course = courses[index]
+                batch.trainer = admin
+                batch.start_date = start
+                batch.end_date = end
+                batch.status = status
+                batch.save()
             batches.append(batch)
             for trainee in trainees:
                 if (trainee.user.pk + index) % 3 != 0:
@@ -107,5 +112,4 @@ class Command(BaseCommand):
                 Placement.objects.create(trainee=trainee, **defaults)
         self.stdout.write(self.style.SUCCESS("Demo data is ready."))
         self.stdout.write("Admin: admin / AdminDemo123!")
-        self.stdout.write("Trainers: trainer1, trainer2, trainer3 / TrainerDemo123!")
         self.stdout.write("Trainees: trainee01 through trainee20 / TraineeDemo123!")

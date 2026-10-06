@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Applications · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Applications</div><h1>{% if is_admin %}Job applications{% else %}My applications{% endif %}</h1><p class="page-subtitle">Track every company application and current hiring stage.</p></div>{% if user.is_trainee_role and user.trainee_profile.is_verified %}<a class="btn btn-primary btn-tw" href="{% url 'placements:application_create' %}"><i class="bi bi-plus-lg"></i>Add application</a>{% endif %}</div>
+<section class="card-tw">
+  <div class="card-tw-body border-bottom"><form method="get" class="filter-bar">
+    <input class="form-control filter-search" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search company, role or trainee" aria-label="Search applications">
+    <select class="form-select" name="status" aria-label="Filter status"><option value="">All statuses</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    {% if is_admin %}<select class="form-select" name="batch" aria-label="Filter batch"><option value="">All batches</option>{% for batch in batch_choices %}<option value="{{ batch.pk }}" {% if request.GET.batch == batch.pk|stringformat:"s" %}selected{% endif %}>{{ batch.name }}</option>{% endfor %}</select>{% endif %}
+    <button class="btn btn-light btn-tw" type="submit">Filter</button><a class="btn btn-light btn-tw" href="{% url 'placements:applications' %}">Clear</a>
+  </form></div>
+  {% if applications %}<div class="table-responsive"><table class="table table-tw"><thead><tr>{% if is_admin %}<th>Trainee</th>{% endif %}<th>Batch</th><th>Company</th><th>Role</th><th>Applied</th><th>Status</th><th>Last updated</th><th></th></tr></thead><tbody>
+  {% for application in applications %}<tr>{% if is_admin %}<td>{{ application.trainee }}</td>{% endif %}<td>{{ application.batch.name }}</td><td>{{ application.company_name }}</td><td>{{ application.job_role }}</td><td>{{ application.applied_date|date:"M j, Y" }}</td><td><span class="status-badge badge-status-{{ application.status|lower }}">{{ application.get_status_display }}</span></td><td>{{ application.updated_at|date:"M j, Y" }}</td><td class="text-end"><a class="btn btn-sm btn-light" href="{% url 'placements:application_detail' application.pk %}" aria-label="View application"><i class="bi bi-arrow-up-right"></i></a></td></tr>{% endfor %}
+  </tbody></table></div>{% include "partials/pagination.html" %}{% else %}<div class="empty-state"><i class="bi bi-send"></i><h2 class="h6 fw-bold text-dark">No applications found</h2><p>{% if user.is_trainee_role and not user.trainee_profile.is_verified %}An Admin must verify your profile before you can apply.{% else %}Add or filter applications to see them here.{% endif %}</p></div>{% endif %}
+</section>
+{% endblock %}

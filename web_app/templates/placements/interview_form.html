@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Edit HR update{% else %}Add HR update{% endif %} · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:interviews' %}">HR Interviews</a> / {% if object %}Edit{% else %}New{% endif %}</div><h1>{% if object %}Update interview{% else %}Add HR interview update{% endif %}</h1><p class="page-subtitle">{{ application.trainee }} · {{ application.company_name }} · {{ application.job_role }}</p></div></div>
+<section class="card-tw"><div class="card-tw-body"><form method="post" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2 mt-3"><button class="btn btn-primary btn-tw" type="submit">Save HR update</button><a class="btn btn-light btn-tw" href="{% url 'placements:application_detail' application.pk %}">Cancel</a></div></form></div></section>
+{% endblock %}

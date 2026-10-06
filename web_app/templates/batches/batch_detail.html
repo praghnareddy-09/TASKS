@@ -1,10 +1,73 @@
 {% extends "base.html" %}
 {% block title %}{{ batch.name }} · TweakTech{% endblock %}
 {% block content %}
-<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / <a href="{% url 'batches:list' %}">Batches</a> / {{ batch.name }}</div><h1>{{ batch.name }}</h1><p class="page-subtitle">{{ batch.course }} · {{ batch.get_status_display }}</p></div>{% if can_manage_batch %}<div class="d-flex gap-2"><a class="btn btn-light btn-tw" href="{% url 'batches:update' batch.pk %}"><i class="bi bi-pencil"></i>Edit</a><a class="btn btn-outline-danger btn-tw" href="{% url 'batches:delete' batch.pk %}"><i class="bi bi-trash"></i>Delete</a>{% if batch.status != 'COMPLETED' %}<form method="post" action="{% url 'batches:complete' batch.pk %}">{% csrf_token %}<button class="btn btn-primary btn-tw" type="submit">Complete batch</button></form>{% endif %}</div>{% endif %}</div>
-<div class="row g-3 mb-4"><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Trainer</div><div class="detail-value">{{ batch.trainer.get_full_name|default:batch.trainer.username }}</div></section></div><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Schedule</div><div class="detail-value">{{ batch.start_date|date:"M j, Y" }} – {{ batch.end_date|date:"M j, Y" }}</div></section></div><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Enrolled trainees</div><div class="detail-value">{{ enrollments|length }}</div></section></div></div>
-<section class="card-tw"><div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Trainees</h2></div>
-{% if enrollments %}<div class="table-responsive"><table class="table table-tw"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th></tr></thead><tbody>{% for enrollment in enrollments %}<tr><td><a href="{% url 'trainees:detail' enrollment.trainee.pk %}">{{ enrollment.trainee }}</a></td><td>{{ enrollment.trainee.user.email|default:"—" }}</td><td>{{ enrollment.trainee.phone|default:"—" }}</td><td><span class="status-badge badge-status-{{ enrollment.trainee.status|lower }}">{{ enrollment.trainee.get_status_display }}</span></td></tr>{% empty %}<tr><td colspan="4" class="text-center text-muted py-4">No trainees enrolled yet.</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><i class="bi bi-people"></i><p class="mb-0">No trainees enrolled yet.</p></div>{% endif %}
+<div class="page-header">
+  <div>
+    <div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / <a href="{% url 'batches:list' %}">Batches</a> / {{ batch.name }}</div>
+    <h1>{{ batch.name }}</h1>
+    <p class="page-subtitle">{{ batch.course }} · {{ batch.get_status_display }}</p>
+  </div>
+  {% if can_manage_batch %}
+  <div class="d-flex gap-2">
+    <a class="btn btn-light btn-tw" href="{% url 'batches:update' batch.pk %}"><i class="bi bi-pencil"></i>Edit</a>
+    <a class="btn btn-outline-danger btn-tw" href="{% url 'batches:delete' batch.pk %}"><i class="bi bi-trash"></i>Delete</a>
+    {% if batch.status != 'COMPLETED' %}<form method="post" action="{% url 'batches:complete' batch.pk %}">{% csrf_token %}<button class="btn btn-primary btn-tw" type="submit">Complete batch</button></form>{% endif %}
+  </div>
+  {% endif %}
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><section class="card-tw card-tw-body h-100"><div class="detail-label">Batch number</div><div class="detail-value">{{ batch.batch_number }}</div></section></div>
+  <div class="col-md-3"><section class="card-tw card-tw-body h-100"><div class="detail-label">Trainer</div><div class="detail-value">{{ batch.trainer.get_full_name|default:batch.trainer.username }}</div></section></div>
+  <div class="col-md-3"><section class="card-tw card-tw-body h-100"><div class="detail-label">Schedule</div><div class="detail-value">{{ batch.start_date|date:"M j, Y" }} – {{ batch.end_date|date:"M j, Y" }}</div></section></div>
+  <div class="col-md-3"><section class="card-tw card-tw-body h-100"><div class="detail-label">Enrolled / Capacity</div><div class="detail-value">{{ enrollments|length }} / {% if batch.capacity %}{{ batch.capacity }}{% else %}Unlimited{% endif %}</div></section></div>
+</div>
+{% if can_manage_batch %}
+<section class="card-tw mb-4">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Add trainees</h2></div>
+  <div class="card-tw-body">
+    {% if enrollment_form.fields.trainees.queryset %}
+    <form method="post" action="{% url 'batches:enrol' batch.pk %}" data-loading-form>
+      {% csrf_token %}
+      <label class="form-label" for="{{ enrollment_form.trainees.id_for_label }}">{{ enrollment_form.trainees.label }}</label>
+      {{ enrollment_form.trainees }}
+      <div class="form-text mb-3">Select one or more trainees. Already enrolled trainees are not listed.</div>
+      <button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner" aria-hidden="true"></span><span class="submit-label">Add selected trainees</span></button>
+    </form>
+    {% else %}<p class="text-muted mb-0">No other trainees are available to add to this batch.</p>{% endif %}
+  </div>
 </section>
-{% if can_manage_batch %}<div class="modal fade" id="deleteBatchModal" tabindex="-1" aria-labelledby="deleteBatchTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5" id="deleteBatchTitle">Delete this batch?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">This removes the batch and its enrollments. This action cannot be undone.</div><div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'batches:delete' batch.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete batch</button></form></div></div></div></div>{% endif %}
+{% endif %}
+<section class="card-tw">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Trainees</h2></div>
+  {% if enrollments %}
+  <div class="table-responsive">
+    <table class="table table-tw">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th>{% if can_manage_batch %}<th aria-label="Actions"></th>{% endif %}</tr></thead>
+      <tbody>
+        {% for enrollment in enrollments %}
+        <tr>
+          <td><a href="{% url 'trainees:detail' enrollment.trainee.pk %}">{{ enrollment.trainee }}</a></td>
+          <td>{{ enrollment.trainee.user.email|default:"—" }}</td>
+          <td>{{ enrollment.trainee.phone|default:"—" }}</td>
+          <td><span class="status-badge badge-status-{{ enrollment.trainee.status|lower }}">{{ enrollment.trainee.get_status_display }}</span></td>
+          {% if can_manage_batch %}<td class="text-end"><button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#removeEnrollment{{ enrollment.pk }}">Remove</button></td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty-state"><i class="bi bi-people"></i><p class="mb-0">No trainees enrolled yet.</p></div>{% endif %}
+</section>
+{% if can_manage_batch %}
+{% for enrollment in enrollments %}
+<div class="modal fade" id="removeEnrollment{{ enrollment.pk }}" tabindex="-1" aria-labelledby="removeEnrollmentTitle{{ enrollment.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h2 class="modal-title fs-5" id="removeEnrollmentTitle{{ enrollment.pk }}">Remove trainee from batch?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body">Remove {{ enrollment.trainee }} from {{ batch.name }}?</div>
+    <div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'batches:enrollment_remove' batch.pk enrollment.trainee.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Remove</button></form></div>
+  </div></div>
+</div>
+{% endfor %}
+<div class="modal fade" id="deleteBatchModal" tabindex="-1" aria-labelledby="deleteBatchTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5" id="deleteBatchTitle">Delete this batch?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">This removes the batch and its enrollments. This action cannot be undone.</div><div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'batches:delete' batch.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete batch</button></form></div></div></div></div>
+{% endif %}
 {% endblock %}

@@ -1,8 +1,108 @@
 {% extends "base.html" %}
 {% block title %}{{ trainee }} · TweakTech{% endblock %}
 {% block content %}
-<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / {{ trainee }}</div><h1>{{ trainee }}</h1><p class="page-subtitle">@{{ trainee.user.username }} · {{ trainee.get_status_display }}</p></div>{% if user.role != 'TRAINEE' %}<div class="d-flex gap-2"><a class="btn btn-light btn-tw" href="{% url 'trainees:update' trainee.pk %}"><i class="bi bi-pencil"></i>Edit profile</a><button class="btn btn-outline-danger btn-tw" type="button" data-bs-toggle="modal" data-bs-target="#deleteTraineeModal"><i class="bi bi-trash"></i>Delete</button></div>{% endif %}</div>
-<div class="row g-3 mb-4"><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Email</div><div class="detail-value">{{ trainee.user.email|default:"—" }}</div><div class="detail-label mt-3">Phone</div><div class="detail-value">{{ trainee.phone|default:"—" }}</div></section></div><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Joined</div><div class="detail-value">{{ trainee.joined_on|date:"M j, Y" }}</div></section></div><div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Current status</div><div class="detail-value"><span class="status-badge badge-status-{{ trainee.status|lower }}">{{ trainee.get_status_display }}</span></div></section></div></div>
-<section class="card-tw"><div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Enrolled batches</h2></div><div class="table-responsive"><table class="table table-tw"><thead><tr><th>Batch</th><th>Course</th><th>Dates</th><th>Status</th><th>Enrollment</th></tr></thead><tbody>{% for enrollment in enrollments %}<tr><td><a class="fw-semibold" href="{% url 'batches:detail' enrollment.batch.pk %}">{{ enrollment.batch.name }}</a></td><td>{{ enrollment.batch.course }}</td><td>{{ enrollment.batch.start_date|date:"M j" }} – {{ enrollment.batch.end_date|date:"M j, Y" }}</td><td><span class="status-badge badge-status-{{ enrollment.batch.status|lower }}">{{ enrollment.batch.get_status_display }}</span></td><td>{{ enrollment.enrolled_on|date:"M j, Y" }}</td></tr>{% empty %}<tr><td colspan="5"><div class="empty-state py-4"><i class="bi bi-collection"></i><p class="mb-0">Not enrolled in a batch yet.</p></div></td></tr>{% endfor %}</tbody></table></div></section>
-{% if user.role != 'TRAINEE' %}<div class="modal fade" id="deleteTraineeModal" tabindex="-1" aria-labelledby="deleteTraineeTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5" id="deleteTraineeTitle">Delete this trainee?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">This permanently removes the trainee account and enrollments.</div><div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'trainees:delete' trainee.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete trainee</button></form></div></div></div></div>{% endif %}
+<div class="page-header">
+  <div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / {{ trainee }}</div><h1>{{ trainee }}</h1><p class="page-subtitle">@{{ trainee.user.username }} · {{ trainee.get_status_display }}</p></div>
+  {% if user.is_admin_role %}<div class="d-flex gap-2"><a class="btn btn-light btn-tw" href="{% url 'trainees:update' trainee.pk %}"><i class="bi bi-pencil"></i>Edit details</a><button class="btn btn-outline-danger btn-tw" type="button" data-bs-toggle="modal" data-bs-target="#deleteTraineeModal"><i class="bi bi-trash"></i>Delete</button></div>{% endif %}
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Email</div><div class="detail-value">{% if trainee.user.email %}{{ trainee.user.email }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</div><div class="detail-label mt-3">Phone</div><div class="detail-value">{% if trainee.phone %}{{ trainee.phone }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</div></section></div>
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Joined</div><div class="detail-value">{{ trainee.joined_on|date:"M j, Y" }}</div></section></div>
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Current status</div><div class="detail-value"><span class="status-badge badge-status-{{ trainee.status|lower }}">{{ trainee.get_status_display }}</span></div><div class="detail-label mt-3">Verification</div><div class="detail-value"><span class="status-badge badge-status-{% if trainee.verification_status == 'VERIFIED' %}active{% elif trainee.verification_status == 'DECLINED' %}declined{% else %}upcoming{% endif %}">{{ trainee.get_verification_status_display }}</span></div><div class="small text-muted mt-3">{{ profile_completion }}% profile complete</div></section></div>
+</div>
+<section class="card-tw mb-4">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Trainee details</h2></div>
+  <div class="card-tw-body">
+    {% if trainee.profile_photo %}<p><a href="{% url 'trainees:photo' trainee.pk %}">View profile photo</a></p>{% else %}<p class="text-muted">Not provided yet</p>{% endif %}
+    <dl class="row mb-0">
+      <dt class="col-sm-4 detail-label">First name</dt><dd class="col-sm-8">{% if trainee.user.first_name %}{{ trainee.user.first_name }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Last name</dt><dd class="col-sm-8">{% if trainee.user.last_name %}{{ trainee.user.last_name }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Username</dt><dd class="col-sm-8">{{ trainee.user.username }}</dd>
+      <dt class="col-sm-4 detail-label">Date of birth</dt><dd class="col-sm-8">{% if trainee.date_of_birth %}{{ trainee.date_of_birth|date:"M j, Y" }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Address</dt><dd class="col-sm-8">{% if trainee.address %}{{ trainee.address|linebreaksbr }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">City</dt><dd class="col-sm-8">{% if trainee.city %}{{ trainee.city }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">State</dt><dd class="col-sm-8">{% if trainee.state %}{{ trainee.state }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Highest qualification</dt><dd class="col-sm-8">{% if trainee.highest_qualification %}{{ trainee.highest_qualification }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">College/university</dt><dd class="col-sm-8">{% if trainee.college_university %}{{ trainee.college_university }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Graduation year</dt><dd class="col-sm-8">{% if trainee.graduation_year %}{{ trainee.graduation_year }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Emergency contact name</dt><dd class="col-sm-8">{% if trainee.emergency_contact_name %}{{ trainee.emergency_contact_name }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+      <dt class="col-sm-4 detail-label">Emergency contact phone</dt><dd class="col-sm-8">{% if trainee.emergency_contact_phone %}{{ trainee.emergency_contact_phone }}{% else %}<span class="text-muted">Not provided yet</span>{% endif %}</dd>
+    </dl>
+    <p class="small text-muted mt-3 mb-0">Last updated by {% if trainee.updated_by %}{{ trainee.updated_by }}{% else %}Not provided yet{% endif %} on {{ trainee.updated_at|date:"M j, Y" }}.</p>
+  </div>
+</section>
+{% if user.is_admin_role %}
+<section class="card-tw mb-4">
+  {% if not trainee.is_verified %}
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Verification</h2></div>
+  <div class="card-tw-body d-flex gap-2 flex-wrap">
+    <form method="post" action="{% url 'trainees:verify' trainee.pk %}">{% csrf_token %}<button class="btn btn-success btn-tw" type="submit">Verify trainee</button></form>
+    <form method="post" action="{% url 'trainees:decline' trainee.pk %}">{% csrf_token %}<button class="btn btn-outline-danger btn-tw" type="submit">Decline registration</button></form>
+    <p class="text-muted mb-0 align-self-center">A verified trainee can be assigned to a batch.</p>
+  </div>
+  {% endif %}
+  <span id="enrollments"></span>
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Enrol in batch</h2></div>
+  <div class="card-tw-body">
+    {% if trainee.is_verified and enrollment_form.fields.batch.queryset %}
+    <form method="post" action="{% url 'trainees:enrol' trainee.pk %}" class="d-flex gap-2 align-items-start flex-wrap" data-loading-form>
+      {% csrf_token %}
+      <div class="flex-grow-1"><label class="form-label" for="{{ enrollment_form.batch.id_for_label }}">Enrol in batch</label>{{ enrollment_form.batch }}</div>
+      <button class="btn btn-primary btn-tw mt-4" type="submit"><span class="spinner-border spinner-border-sm loading-spinner" aria-hidden="true"></span><span class="submit-label">Add</span></button>
+    </form>
+    {% elif not trainee.is_verified %}<p class="text-muted mb-0">Verify this trainee before assigning a batch.</p>
+    {% else %}<p class="text-muted mb-0">No other batches are available for this trainee.</p>{% endif %}
+  </div>
+</section>
+{% endif %}
+<section class="card-tw mb-4" id="placement-history">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Placement and application history</h2><a href="{% url 'placements:applications' %}">Applications</a></div>
+  <div class="card-tw-body">
+    {% if application_history %}
+    <div class="table-responsive"><table class="table table-tw"><thead><tr><th>Company</th><th>Role</th><th>Batch</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+      {% for application in application_history %}<tr><td><a href="{% url 'placements:application_detail' application.pk %}">{{ application.company_name }}</a></td><td>{{ application.job_role }}</td><td>{{ application.batch.name }}</td><td><span class="status-badge badge-status-{{ application.status|lower }}">{{ application.get_status_display }}</span></td><td>{{ application.updated_at|date:"M j, Y" }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% else %}<p class="text-muted mb-0">No job applications have been added.</p>{% endif %}
+    {% if placement_history %}
+    <h3 class="h6 fw-bold mt-4">Existing placement records</h3>
+    <div class="table-responsive"><table class="table table-tw"><thead><tr><th>Company</th><th>Job title</th><th>Batch</th><th>Status</th><th>Offer date</th></tr></thead><tbody>
+      {% for placement in placement_history %}<tr><td><a href="{% url 'placements:detail' placement.pk %}">{{ placement.company_name }}</a></td><td>{{ placement.job_title }}</td><td>{{ placement.batch.name }}</td><td>{{ placement.get_status_display }}</td><td>{{ placement.offer_date|date:"M j, Y" }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% endif %}
+  </div>
+</section>
+<section class="card-tw">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Enrolled batches</h2></div>
+  <div class="table-responsive">
+    <table class="table table-tw">
+      <thead><tr><th>Batch</th><th>Batch number</th><th>Course</th><th>Dates</th><th>Status</th><th>Enrollment</th>{% if user.is_admin_role %}<th aria-label="Actions"></th>{% endif %}</tr></thead>
+      <tbody>
+        {% for enrollment in enrollments %}
+        <tr>
+          <td><a class="fw-semibold" href="{% url 'batches:detail' enrollment.batch.pk %}">{{ enrollment.batch.name }}</a></td>
+          <td>{{ enrollment.batch.batch_number }}</td>
+          <td>{{ enrollment.batch.course }}</td>
+          <td>{{ enrollment.batch.start_date|date:"M j" }} – {{ enrollment.batch.end_date|date:"M j, Y" }}</td>
+          <td><span class="status-badge badge-status-{{ enrollment.batch.status|lower }}">{{ enrollment.batch.get_status_display }}</span></td>
+          <td>{{ enrollment.enrolled_on|date:"M j, Y" }}</td>
+          {% if user.is_admin_role %}<td class="text-end"><button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#removeEnrollment{{ enrollment.pk }}">Remove</button></td>{% endif %}
+        </tr>
+        {% empty %}<tr><td colspan="{% if user.is_admin_role %}7{% else %}6{% endif %}"><div class="empty-state py-4"><i class="bi bi-collection"></i><p class="mb-0">Not enrolled in a batch yet.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% if user.is_admin_role %}
+{% for enrollment in enrollments %}
+<div class="modal fade" id="removeEnrollment{{ enrollment.pk }}" tabindex="-1" aria-labelledby="removeEnrollmentTitle{{ enrollment.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h2 class="modal-title fs-5" id="removeEnrollmentTitle{{ enrollment.pk }}">Remove from batch?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body">Remove {{ trainee }} from {{ enrollment.batch.name }}?</div>
+    <div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'trainees:enrollment_remove' trainee.pk enrollment.batch.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Remove</button></form></div>
+  </div></div>
+</div>
+{% endfor %}
+<div class="modal fade" id="deleteTraineeModal" tabindex="-1" aria-labelledby="deleteTraineeTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5" id="deleteTraineeTitle">Delete this trainee?</h2><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">This permanently removes the trainee account and enrollments.</div><div class="modal-footer"><button class="btn btn-light btn-tw" type="button" data-bs-dismiss="modal">Cancel</button><form method="post" action="{% url 'trainees:delete' trainee.pk %}">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete trainee</button></form></div></div></div></div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Registration requests · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Registrations</div><h1>Registration requests</h1><p class="page-subtitle">Review user details and choose the role before granting access.</p></div></div>
+<section class="card-tw">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Awaiting review</h2><span class="badge text-bg-primary">{{ pending_users|length }}</span></div>
+  {% if pending_users %}<div class="table-responsive"><table class="table table-tw"><thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Registered</th><th>Verification</th><th></th></tr></thead><tbody>
+  {% for pending_user in pending_users %}<tr><td>{{ pending_user.get_full_name|default:"—" }}</td><td>{{ pending_user.username }}</td><td>{{ pending_user.email|default:"—" }}</td><td>{{ pending_user.date_joined|date:"M j, Y, g:i a" }}</td><td>{% if pending_user.is_trainee_role %}<span class="status-badge badge-status-upcoming">Pending Verification</span>{% else %}<span class="status-badge badge-status-upcoming">Pending Approval</span>{% endif %}</td><td class="text-end"><a class="btn btn-sm btn-primary btn-tw" href="{% url 'accounts:registration_review' pending_user.pk %}">Review</a></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty-state"><i class="bi bi-person-check"></i><h2 class="h6 fw-bold text-dark">No requests to review</h2><p class="mb-0">New registrations will appear here.</p></div>{% endif %}
+</section>
+{% endblock %}

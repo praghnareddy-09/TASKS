@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Create account · TweakTech{% endblock %}
+{% block guest_layout_class %}auth-page-wrapper{% endblock %}
+{% block guest_illustration %}{% endblock %}
+{% block guest_brand %}{% endblock %}
+{% block guest_content %}
+<main class="auth-page">
+  <div class="auth-shell">
+    <aside class="auth-visual" aria-hidden="true">
+      {% include "accounts/_auth_illustration.html" %}
+    </aside>
+    <section class="auth-panel">
+      <div class="auth-brand"><span class="brand-mark">T</span></div>
+      <div class="auth-content">
+        <div class="mb-4 auth-heading"><h1 class="h4 fw-bold">Create an account</h1><p class="text-muted mb-0">An Admin will review your details and assign your account role before you can sign in.</p></div>
+        {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <form method="post" data-loading-form novalidate>
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+              {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+            </div>
+          {% endfor %}
+          <button class="btn btn-primary btn-tw w-100 py-2" type="submit"><span class="spinner-border spinner-border-sm loading-spinner" aria-hidden="true"></span><span class="submit-label">Submit registration</span></button>
+        </form>
+        <p class="text-center text-muted mt-4 mb-0">Already registered? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock %}

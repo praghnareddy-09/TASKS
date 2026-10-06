@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{% if object %}Edit application{% else %}Add application{% endif %} · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:applications' %}">Applications</a> / {% if object %}Edit{% else %}New{% endif %}</div><h1>{% if object %}Edit application{% else %}Add job application{% endif %}</h1><p class="page-subtitle">Each company application is tracked separately and linked to one of your assigned batches.</p></div></div>
+<section class="card-tw"><div class="card-tw-body"><form method="post" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2 mt-3"><button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Save application</span></button><a class="btn btn-light btn-tw" href="{% if object %}{% url 'placements:application_detail' object.pk %}{% else %}{% url 'placements:applications' %}{% endif %}">Cancel</a></div></form></div></section>
+{% endblock %}

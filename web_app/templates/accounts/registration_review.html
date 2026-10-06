@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Review registration · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'accounts:registration_queue' %}">Registration requests</a> / Review</div><h1>Review account</h1><p class="page-subtitle">Verify these details, assign a role, and approve access.</p></div></div>
+<div class="row g-3">
+  <div class="col-lg-7"><section class="card-tw card-tw-body">
+    <h2 class="h6 fw-bold mb-4">Submitted details</h2>
+    <div class="detail-label">Name</div><div class="detail-value">{{ object.get_full_name|default:"—" }}</div>
+    <div class="detail-label mt-3">Username</div><div class="detail-value">{{ object.username }}</div>
+    <div class="detail-label mt-3">Email</div><div class="detail-value">{{ object.email|default:"—" }}</div>
+    <div class="detail-label mt-3">Registered</div><div class="detail-value">{{ object.date_joined|date:"M j, Y, g:i a" }}</div>
+  </section></div>
+  <div class="col-lg-5"><section class="card-tw card-tw-body">
+    <h2 class="h6 fw-bold mb-3">Assign role and approve</h2>
+    <form method="post">{% csrf_token %}
+      <div class="mb-3"><label for="{{ form.role.id_for_label }}" class="form-label">Role</label>{{ form.role }}{% for error in form.role.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>
+      {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      <button class="btn btn-primary btn-tw" type="submit" name="decision" value="approve">Approve account</button>
+      <button class="btn btn-outline-danger btn-tw" type="submit" name="decision" value="decline">Decline registration</button>
+      <a class="btn btn-light btn-tw" href="{% url 'accounts:registration_queue' %}">Cancel</a>
+    </form>
+  </section></div>
+</div>
+{% endblock %}

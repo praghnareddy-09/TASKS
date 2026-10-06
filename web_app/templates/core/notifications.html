@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Notifications · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Notifications</div><h1>Notifications</h1><p class="page-subtitle">Updates for your trainee, batch and application workflows.</p></div>
+  {% if unread_workflow_notification_count %}<form method="post">{% csrf_token %}<button class="btn btn-light btn-tw" type="submit">Mark all as read</button></form>{% endif %}
+</div>
+<section class="card-tw">
+  {% if notifications %}<div class="list-group list-group-flush">{% for notification in notifications %}
+  <article class="list-group-item border-0 px-4 py-3">
+    <div class="d-flex justify-content-between align-items-start gap-3"><div>
+      <div class="fw-semibold text-dark">{{ notification.message }}</div>
+      <div class="small text-muted mt-1">Trainee: {{ notification.trainee }} · {{ notification.created_at|date:"M j, Y, g:i a" }}</div>
+      {% if notification.application %}<a class="small" href="{% url 'placements:application_detail' notification.application_id %}">View application</a>{% endif %}
+    </div>{% if not notification.read_at %}<span class="status-badge badge-status-upcoming">Unread</span>{% endif %}</div>
+  </article>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-bell"></i><p class="mb-0">No workflow notifications yet.</p></div>{% endif %}
+  {% include "partials/pagination.html" %}
+</section>
+{% endblock %}

@@ -4,3 +4,6 @@ crispy-bootstrap5>=2024.10
 python-dotenv>=1.0
 APScheduler>=3.10,<4
 psycopg[binary]>=3.2
+Pillow>=10.0
+channels[daphne]>=4.2,<5
+channels-redis>=4.2,<5

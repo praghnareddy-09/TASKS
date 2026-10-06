@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}My profile · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / My profile</div><h1>My profile</h1><p class="page-subtitle">Add your personal and education details to complete your profile.</p></div></div>
+<section class="card-tw mb-4"><div class="card-tw-body">
+  <div class="row g-3 mb-4">
+    <div class="col-md-6"><div class="detail-label">Username (read-only)</div><div class="detail-value">{{ user.username }}</div></div>
+    <div class="col-md-6"><div class="detail-label">Batch (assigned by Admin)</div><div class="detail-value">{% for enrollment in enrollments %}{{ enrollment.batch.name }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted">Not assigned yet</span>{% endfor %}</div></div>
+  </div>
+  {% if object.profile_photo %}<p><a href="{% url 'trainees:photo' object.pk %}">View current profile photo</a></p>{% endif %}
+  <form method="post" enctype="multipart/form-data" data-loading-form>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Save profile</span></button>
+      <a class="btn btn-light btn-tw" href="{% url 'core:dashboard' %}">Cancel</a>
+      <a class="btn btn-link btn-tw" href="{% url 'accounts:password_change' %}">Change password</a>
+    </div>
+  </form>
+</div></section>
+{% endblock %}

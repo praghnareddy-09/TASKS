@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{% block title %}{% if object %}Edit trainee{% else %}New trainee{% endif %} · TweakTech{% endblock %}
+{% block title %}{% if object %}Edit trainee details{% else %}Add trainee{% endif %} · TweakTech{% endblock %}
 {% block content %}
-<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / {% if object %}Edit{% else %}New{% endif %}</div><h1>{% if object %}Edit trainee{% else %}Add a trainee{% endif %}</h1><p class="page-subtitle">Set their contact details, status and batch enrollments.</p></div></div>
-<section class="card-tw"><div class="card-tw-body"><form method="post" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2 mt-3"><button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">Save trainee</span></button><a class="btn btn-light btn-tw" href="{% url 'trainees:list' %}">Cancel</a></div></form></div></section>
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'trainees:list' %}">Trainees</a> / {% if object %}Edit details{% else %}New{% endif %}</div><h1>{% if object %}Edit trainee details{% else %}Add a trainee{% endif %}</h1><p class="page-subtitle">{% if object %}Update the trainee's profile, status and batch assignment.{% else %}Create an account with the minimum details. The trainee will complete their profile after signing in.{% endif %}</p></div></div>
+<section class="card-tw"><div class="card-tw-body"><form method="post" enctype="multipart/form-data" data-loading-form>{% csrf_token %}{{ form|crispy }}<div class="d-flex gap-2 mt-3"><button class="btn btn-primary btn-tw" type="submit"><span class="spinner-border spinner-border-sm loading-spinner"></span><span class="submit-label">{% if object %}Save details{% else %}Create trainee{% endif %}</span></button><a class="btn btn-light btn-tw" href="{% if object %}{% url 'trainees:detail' object.pk %}{% else %}{% url 'trainees:list' %}{% endif %}">Cancel</a></div></form></div></section>
 {% endblock %}

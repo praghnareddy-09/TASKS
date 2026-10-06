@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ object.company_name }} application · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:applications' %}">Applications</a> / {{ object.company_name }}</div><h1>{{ object.company_name }}</h1><p class="page-subtitle">{{ object.job_role }} · {{ object.batch.name }} · Applied {{ object.applied_date|date:"M j, Y" }}</p></div>
+  <div class="d-flex gap-2 flex-wrap">{% if can_edit_application %}<a class="btn btn-light btn-tw" href="{% url 'placements:application_update' object.pk %}">Edit</a><a class="btn btn-outline-danger btn-tw" href="{% url 'placements:application_delete' object.pk %}">Delete</a>{% endif %}{% if is_admin %}<a class="btn btn-primary btn-tw" href="{% url 'placements:interview_create' object.pk %}">Add HR update</a>{% endif %}</div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Current status</div><div class="detail-value"><span class="status-badge badge-status-{{ object.status|lower }}">{{ object.get_status_display }}</span></div></section></div>
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Batch number</div><div class="detail-value">#{{ object.batch.batch_number }} · {{ object.batch.name }}</div></section></div>
+  <div class="col-md-4"><section class="card-tw card-tw-body h-100"><div class="detail-label">Location</div><div class="detail-value">{{ object.location|default:"Not provided" }}</div></section></div>
+</div>
+<section class="card-tw mb-4">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Interview and HR history</h2></div>
+  {% if object.interviews.all %}<div class="table-responsive"><table class="table table-tw"><thead><tr><th>Interview date</th><th>Interview status</th><th>HR name</th><th>HR contact</th><th>Remarks</th>{% if is_admin %}<th></th>{% endif %}</tr></thead><tbody>
+    {% for interview in object.interviews.all %}<tr><td>{{ interview.interview_date|date:"M j, Y, g:i a"|default:"Not scheduled" }}</td><td><span class="status-badge badge-status-{{ interview.status|lower }}">{{ interview.get_status_display }}</span></td><td>{{ interview.hr_name|default:"—" }}</td><td>{{ interview.hr_contact|default:"—" }}</td><td>{{ interview.remarks|default:"—" }}</td>{% if is_admin %}<td><a href="{% url 'placements:interview_update' interview.pk %}">Edit</a></td>{% endif %}</tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty-state py-4"><i class="bi bi-calendar2-check"></i><p class="mb-0">No interview updates yet.</p></div>{% endif %}
+</section>
+<section class="card-tw">
+  <div class="card-tw-header"><h2 class="h6 fw-bold mb-0">Status audit</h2></div>
+  {% if object.audit_entries.all %}<div class="list-group list-group-flush">{% for entry in object.audit_entries.all %}<div class="list-group-item border-0 px-4 py-3"><span class="fw-semibold">{{ entry.field_name|title }}</span>: {{ entry.previous_value|default:"Created" }} → {{ entry.new_value }} <span class="small text-muted">by {{ entry.actor|default:"System" }} on {{ entry.created_at|date:"M j, Y, g:i a" }}</span></div>{% endfor %}</div>{% else %}<div class="empty-state py-4"><p class="mb-0">No status changes recorded yet.</p></div>{% endif %}
+</section>
+{% endblock %}

@@ -1,18 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Trainees · TweakTech{% endblock %}
 {% block content %}
-<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Trainees</div><h1>Trainees</h1><p class="page-subtitle">Manage learners, contact details and enrollments.</p></div><a class="btn btn-primary btn-tw" href="{% url 'trainees:create' %}"><i class="bi bi-person-plus"></i>Add trainee</a></div>
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'core:dashboard' %}">Workspace</a> / Trainees</div><h1>Trainees</h1><p class="page-subtitle">Manage learners, contact details and enrollments.</p></div>{% if user.is_admin_role %}<a class="btn btn-primary btn-tw" href="{% url 'trainees:create' %}"><i class="bi bi-person-plus"></i>Add trainee</a>{% endif %}</div>
 <section class="card-tw">
   <div class="card-tw-body border-bottom"><form method="get" class="filter-bar">
     <div class="input-group filter-search"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input class="form-control border-start-0" name="q" value="{{ request.GET.q }}" placeholder="Search name, email or phone" aria-label="Search trainees"></div>
     <select class="form-select" name="status" aria-label="Filter by trainee status"><option value="">All statuses</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select class="form-select" name="verification" aria-label="Filter by verification status"><option value="">All verification</option>{% for value,label in verification_choices %}<option value="{{ value }}" {% if request.GET.verification == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
     <select class="form-select" name="batch" aria-label="Filter by batch"><option value="">All batches</option>{% for batch in batch_choices %}<option value="{{ batch.pk }}" {% if request.GET.batch == batch.pk|stringformat:"s" %}selected{% endif %}>{{ batch.name }}</option>{% endfor %}</select>
-    <input class="form-control" type="date" name="start" value="{{ request.GET.start }}" aria-label="Joined on or after"><input class="form-control" type="date" name="end" value="{{ request.GET.end }}" aria-label="Joined on or before">
+    <input class="form-control" type="date" name="start" value="{{ request.GET.start }}" aria-label="Joined on or after">
     <button class="btn btn-light btn-tw" type="submit">Filter</button><a class="btn btn-light btn-tw" href="{% url 'trainees:list' %}">Clear</a>
   </form>{% if request.GET.q or request.GET.status or request.GET.batch %}<div class="d-flex gap-2 flex-wrap mt-3"><span class="filter-chip">Active filters</span>{% if request.GET.q %}<span class="filter-chip">Search: {{ request.GET.q }}</span>{% endif %}{% if request.GET.status %}<span class="filter-chip">Status: {{ request.GET.status|title }}</span>{% endif %}</div>{% endif %}</div>
-  {% if trainees %}<div class="table-responsive"><table class="table table-tw"><thead><tr><th>Trainee</th><th>Contact</th><th>Enrolled batches</th><th>Joined</th><th>Status</th><th></th></tr></thead><tbody>{% for trainee in trainees %}<tr>
-    <td><a class="fw-semibold" href="{% url 'trainees:detail' trainee.pk %}">{{ trainee }}</a><div class="small text-muted">@{{ trainee.user.username }}</div></td><td>{{ trainee.user.email|default:"—" }}<div class="small text-muted">{{ trainee.phone|default:"No phone" }}</div></td><td>{{ trainee.batch_count }}</td><td>{{ trainee.joined_on|date:"M j, Y" }}</td><td><span class="status-badge badge-status-{{ trainee.status|lower }}">{{ trainee.get_status_display }}</span></td><td class="text-end"><a class="btn btn-sm btn-light" href="{% url 'trainees:detail' trainee.pk %}" aria-label="View {{ trainee }}"><i class="bi bi-arrow-up-right"></i></a></td>
-  </tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><i class="bi bi-people"></i><h2 class="h6 fw-bold text-dark">No trainees found</h2><p>Adjust your filters or add your first learner.</p><a class="btn btn-primary btn-tw" href="{% url 'trainees:create' %}"><i class="bi bi-person-plus"></i>Add trainee</a></div>{% endif %}
+  {% if trainees %}<div class="table-responsive"><table class="table table-tw"><thead><tr><th>Trainee ID</th><th>Name</th><th>Email / Phone</th><th>Course</th><th>Registration date</th><th>Verification</th><th>Batch assigned</th><th>Placement status</th><th>Profile</th><th>Status / Actions</th></tr></thead><tbody>{% for trainee in trainees %}<tr>
+    {% with enrollment=trainee.enrollments.all|first application=trainee.job_applications.all|first placement=trainee.placements.all|first %}
+    <td>#{{ trainee.pk }}</td>
+    <td><a class="fw-semibold" href="{% url 'trainees:detail' trainee.pk %}">{{ trainee }}</a><div class="small text-muted">@{{ trainee.user.username }}</div></td>
+    <td>{{ trainee.user.email|default:"—" }}<div class="small text-muted">{{ trainee.phone|default:"Not provided yet" }}</div></td>
+    <td>{% if enrollment %}{{ enrollment.batch.course }}{% else %}<span class="text-muted">Not assigned</span>{% endif %}</td>
+    <td>{{ trainee.joined_on|date:"M j, Y" }}</td>
+    <td><span class="status-badge badge-status-{% if trainee.verification_status == 'VERIFIED' %}active{% elif trainee.verification_status == 'DECLINED' %}declined{% else %}upcoming{% endif %}">{{ trainee.get_verification_status_display }}</span></td>
+    <td>{% if enrollment %}<a href="{% url 'batches:detail' enrollment.batch_id %}">{{ enrollment.batch.name }}</a>{% else %}<span class="text-muted">Not assigned</span>{% endif %}</td>
+    <td>{% if application %}<span class="status-badge badge-status-{{ application.status|lower }}">{{ application.get_status_display }}</span>{% elif placement %}<span class="status-badge badge-status-{{ placement.status|lower }}">{{ placement.get_status_display }}</span>{% else %}<span class="text-muted">Not started</span>{% endif %}</td>
+    <td>{% if trainee.profile_is_complete %}<span class="status-badge badge-status-joined">Complete</span>{% else %}<span class="status-badge badge-status-upcoming">Incomplete</span><div class="small text-muted">{{ trainee.profile_completion_percentage }}%</div>{% endif %}</td>
+    <td><span class="status-badge badge-status-{{ trainee.status|lower }}">{{ trainee.get_status_display }}</span><div class="d-flex flex-wrap gap-1 mt-2">
+      {% if trainee.verification_status == 'PENDING' %}<form method="post" action="{% url 'trainees:verify' trainee.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-success" type="submit">Verify</button></form><form method="post" action="{% url 'trainees:decline' trainee.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Decline</button></form>{% endif %}
+      {% if trainee.is_verified %}<a class="btn btn-sm btn-light" href="{% url 'trainees:detail' trainee.pk %}#enrollments">Assign batch</a>{% endif %}
+      <a class="btn btn-sm btn-light" href="{% url 'trainees:detail' trainee.pk %}#placement-history">History</a>
+      <form method="post" action="{% url 'trainees:toggle_active' trainee.pk %}">{% csrf_token %}<button class="btn btn-sm btn-light" type="submit">{% if trainee.status == 'ACTIVE' %}Deactivate{% else %}Activate{% endif %}</button></form>
+    </div></td>
+    {% endwith %}
+  </tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><i class="bi bi-people"></i><h2 class="h6 fw-bold text-dark">No trainees found</h2><p>{% if user.is_admin_role %}Adjust your filters or add your first learner.{% else %}No trainee profiles match these filters.{% endif %}</p>{% if user.is_admin_role %}<a class="btn btn-primary btn-tw" href="{% url 'trainees:create' %}"><i class="bi bi-person-plus"></i>Add trainee</a>{% endif %}</div>{% endif %}
   {% include "partials/pagination.html" %}
 </section>
 {% endblock %}

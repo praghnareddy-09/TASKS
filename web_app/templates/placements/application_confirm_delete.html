@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Delete application · TweakTech{% endblock %}
+{% block content %}
+<div class="page-header"><div><div class="breadcrumbs"><a href="{% url 'placements:applications' %}">Applications</a> / Delete</div><h1>Delete application?</h1></div></div>
+<section class="card-tw"><div class="card-tw-body"><p>Delete your application to {{ object.company_name }}? Its interview history and audit entries will also be removed.</p><form method="post">{% csrf_token %}<button class="btn btn-danger btn-tw" type="submit">Delete application</button><a class="btn btn-light btn-tw" href="{% url 'placements:application_detail' object.pk %}">Cancel</a></form></div></section>
+{% endblock %}
